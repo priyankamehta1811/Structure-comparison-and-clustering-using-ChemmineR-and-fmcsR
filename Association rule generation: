@@ -1,0 +1,16 @@
+library(arules)
+##program to convert .csv files into tansactional db files via dataframe.##
+#read .csv file as dataframe
+dat2 <- read.csv("org_property.csv", head=TRUE,sep="," , as.is = T)
+##convert the columns into factor individually
+dat2[,1]<-factor(dat2[,1])
+dat2[,2] <- factor(dat2[,2])
+dat2[,3] <- factor(dat2[,3])
+orgdat <- dat2[,c(1,2,3)]
+trans_org <- as(orgdat, "transactions") #convert dataframe into transactional data
+inspect(head(trans_org,2)) # to view transactional data
+itemFrequencyPlot(txn, topN = 5)# plot to see the frequently occurring items
+rules <- apriori(trans_org,parameter = list(supp = 0.0001, conf = 0.005))# Apripori
+algorithm implementation
+inspect(rules[1:10])
+write.csv<-(rules, “ rules.csv”)
