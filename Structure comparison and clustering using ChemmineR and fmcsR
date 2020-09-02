@@ -1,0 +1,18 @@
+library("ChemmineR")
+library("ChemmineOB")
+library("fmcsR")
+###reading SMIlEsets
+smiset <-read.SMIset("SMIleset.smi")
+len<-length(smiset)
+### convert smiles to 2D SDF set
+sdfset <- smiles2sdf(smiset)
+view(sdfset)
+write.SDF(sdfset, file="sdf.sdf")
+### creating cluters of similar structures
+d <- sapply(cid(sdfset), function(x) fmcsBatch(sdfset[x], sdfset, au=0, bu=0,
+matching.mode="aromatic")[,"Overlap_Coefficient"])
+d
+hc <- hclust(as.dist(1-d), method="complete")
+plot(as.dendrogram(hc), edgePar=list(col=4, lwd=2), horiz=TRUE)
+### plotting MCS for highly similar structures.
+plotMCS(fmcs(sdfset[i], sdfset[j], au=2, bu=2,fast=FALSE))
